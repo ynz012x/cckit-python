@@ -31,7 +31,7 @@ repos:
     hooks:
       - id: mcp-scan
         name: skills security scan
-        entry: uvx mcp-scan@latest --skills skills/
+        entry: /usr/local/bin/uvx --python /usr/local/bin/python3 mcp-scan@latest --skills skills/
         language: system
         pass_filenames: false
         files: ^skills/.*$
