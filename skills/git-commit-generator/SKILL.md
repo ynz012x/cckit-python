@@ -6,15 +6,14 @@ disable-model-invocation: true
 
 # Git Commit Generator
 
-分析暂存区变更，生成 Conventional Commits 规范的中文提交消息并执行提交。
+分析暂存区变更，生成 Conventional Commits 规范的中文提交消息并自动提交。
 
 ## 流程概述
 
 1. 检查前置条件 - 确认暂存区有内容可提交
 2. 收集变更信息 - 获取暂存区 diff 和文件列表
 3. 推断 type 和 scope - 根据变更内容智能推断
-4. 生成 commit message - 按规范格式生成中文消息
-5. 确认并提交 - 用户确认后执行 git commit
+4. 生成并提交 - 生成中文消息后直接执行 git commit
 
 完整规范参考：[references/conventional-commits-spec.md](references/conventional-commits-spec.md)
 
@@ -25,22 +24,29 @@ disable-model-invocation: true
 运行 `git status --porcelain` 检查暂存区状态。
 
 - 存在暂存文件（行首为 `M `、`A `、`D `、`R ` 等）时继续
-- 无暂存文件时提示用户先 `git add`，终止流程
-- 检测到 `.git/MERGE_HEAD` 存在时提示用户这是 merge commit，建议使用 git 默认消息
-- 检测到 `.git/REBASE_HEAD` 存在时警告用户当前处于 rebase 状态
+- 无暂存文件时提示用户先 `git add`，**终止流程**
+- 检测到 `.git/MERGE_HEAD` 存在时提示这是 merge commit，**终止流程**（用户应使用 git 默认消息）
+- 检测到 `.git/REBASE_HEAD` 存在时提示当前处于 rebase 状态，**终止流程**
 
 ## Step 2: 收集变更信息
 
-并行执行以下命令收集信息：
+### 基础信息（始终读取）
 
 ```bash
 git diff --cached --name-status    # 变更文件列表和状态（M/A/D/R）
 git diff --cached --stat           # 变更统计摘要
-git diff --cached                  # 详细 diff 内容
 git log --oneline -5               # 近期提交风格参考
 ```
 
-对于大型变更（文件数 > 20 或 diff 行数过多），仅读取 `--name-status` 和 `--stat`，对前 20 个文件采样读取详细 diff，避免上下文过载。
+### 详细 diff（按条件读取）
+
+根据变更规模决定是否读取详细 diff：
+
+| 变更规模 | 判定条件 | 读取策略 |
+|----------|----------|----------|
+| 小型 | 文件数 ≤ 10 且 stat 显示总行数 ≤ 300 | 完整读取 `git diff --cached` |
+| 中型 | 文件数 ≤ 20 或总行数 ≤ 500 | 仅读取前 10 个文件的 diff |
+| 大型 | 文件数 > 20 或总行数 > 500 | 不读取详细 diff，仅基于 name-status 和 stat 推断 |
 
 ## Step 3: 推断 type 和 scope
 
@@ -73,40 +79,31 @@ git log --oneline -5               # 近期提交风格参考
 
 ### Breaking Change 检测
 
-分析 diff 是否包含：删除公共函数/方法、修改 API 签名、移除导出接口。检测到时向用户确认是否标记为 Breaking Change。
+分析 diff 是否包含：删除公共函数/方法、修改 API 签名、移除导出接口。检测到时**自动添加** `!` 后缀和 `BREAKING CHANGE:` footer。
 
-## Step 4: 生成 commit message
+## Step 4: 生成并提交
 
-### 格式规则
+### 消息格式
 
 ```
-<type>[(scope)]: <中文描述>
+<type>[(scope)][!]: <中文描述>
 
 [中文 body]
 
-[footer]
+[BREAKING CHANGE: <说明>]
 ```
+
+### 生成规则
 
 - **type**：英文，从 Step 3 推断
 - **scope**：英文，可选，从 Step 3 推断
 - **description**：中文，动宾结构，简洁概括变更目的
-- **body**：中文，可选，复杂变更时用列表形式列举关键变更点
-- **footer**：可选，Breaking Change 使用 `BREAKING CHANGE: <说明>`，关联 Issue 使用 `Closes #N`
+- **body**：中文，复杂变更（文件数 > 5）时用列表列举关键变更点
+- **footer**：Breaking Change 时添加 `BREAKING CHANGE: <说明>`
 
-### 描述撰写要求
+### 执行提交
 
-- 使用中文动宾结构（如"添加…"、"修复…"、"重构…"、"优化…"、"更新…"）
-- 描述变更目的而非变更内容
-- 简洁清晰，避免冗余
-
-## Step 5: 确认并提交
-
-1. 展示生成的完整 commit message 预览
-2. 向用户提供选项：
-   - **确认提交**：执行提交
-   - **修改消息**：用户提供修改意见后重新生成
-   - **取消**：终止流程
-3. 用户确认后使用 heredoc 格式提交：
+生成消息后直接执行提交：
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -115,5 +112,5 @@ EOF
 )"
 ```
 
-4. 提交成功后显示 commit hash
-5. 提交失败时（如 pre-commit hook 失败）显示错误信息，询问用户处理方式
+- 提交成功：显示 commit hash，流程结束
+- 提交失败（如 pre-commit hook 失败）：显示错误信息，**终止流程**（用户自行处理后重新调用）
