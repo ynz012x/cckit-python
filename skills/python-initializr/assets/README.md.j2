@@ -6,6 +6,7 @@
 
 - 使用 [uv](https://docs.astral.sh/uv/) 进行依赖管理
 - 使用 [pre-commit](https://pre-commit.com/) 进行代码规范检查
+- 使用 [mypy](https://mypy-lang.org/) 进行类型检查
 - 使用 [pytest](https://docs.pytest.org/) 进行测试
 - 使用 [bumpversion](https://github.com/peritus/bumpversion) 进行版本管理
 
@@ -39,6 +40,9 @@ uv run pytest
 # 格式化代码
 uv run pre-commit run --all-files
 
+# 类型检查
+uv run mypy src/{{ project_name }}/
+
 # 版本升级
 uv run bumpversion patch  # 或 minor, major
 ```
@@ -51,6 +55,7 @@ uv run bumpversion patch  # 或 minor, major
 │   └── {{ project_name }}/
 │       ├── __init__.py
 │       ├── _version.py
+│       ├── py.typed
 │       └── ...
 ├── tests/
 │   └── __init__.py
