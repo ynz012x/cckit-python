@@ -1,11 +1,11 @@
 {
-  "name": "cckit-python",
+  "name": "ccpy",
   "owner": {
     "name": "ynz012x"
   },
   "plugins": [
     {
-      "name": "cckit-python",
+      "name": "ccpy",
       "description": "Python 开发工具集 - 包含项目初始化、Git 提交生成、需求分析和系统设计等 Agent Skills",
       "version": "1.0.0",
       "source": "./",
