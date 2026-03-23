@@ -1,6 +1,6 @@
 ---
 name: python-initializr
-description: 初始化一个规范的 Python 项目，包含依赖管理、代码规范检查、类型检查、测试框架、版本管理等。当用户需要创建新的 Python 项目时触发此 skill。
+description: 初始化一个规范的 Python 项目，包含依赖管理、代码规范检查、类型检查、测试框架、版本管理等。当用户需要创建新的 Python 项目、初始化 Python 包、搭建 Python 开发环境、用 uv 创建项目时，请使用此 skill。
 disable-model-invocation: true
 ---
 
@@ -54,9 +54,9 @@ uv init \
 uv add --dev pre-commit black flake8 flake8-import-order ruff mypy
 ```
 
-将 [assets/pre-commit-config.yaml](assets/pre-commit-config.yaml) 内容写入项目根目录的 `.pre-commit-config.yaml` 文件
+将 [assets/templates/pre-commit-config.yaml](assets/templates/pre-commit-config.yaml) 内容写入项目根目录的 `.pre-commit-config.yaml` 文件
 
-将 [assets/flake8.j2](assets/flake8.j2) 模板应用到项目根目录的 `.flake8` 文件，替换变量 `{{ project_name }}` 为项目名称
+将 [assets/templates/flake8](assets/templates/flake8) 模板应用到项目根目录的 `.flake8` 文件，替换变量 `{{ project_name }}` 为项目名称
 
 安装 pre-commit hooks：
 
@@ -70,21 +70,7 @@ uv run pre-commit install
 touch src/<project_name>/py.typed
 ```
 
-在 `pyproject.toml` 中添加 mypy 配置：
-
-```toml
-[tool.mypy]
-python_version = "<python_version>"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-show_error_codes = true
-```
+在 `pyproject.toml` 中添加 mypy 配置，将 [assets/templates/pyproject-mypy.toml](assets/templates/pyproject-mypy.toml) 模板内容追加到 `pyproject.toml`，替换变量 `{{ python_version }}` 为 Python 版本
 
 ## Step 4: 配置测试框架
 
@@ -101,34 +87,7 @@ mkdir -p tests
 touch tests/__init__.py
 ```
 
-在 `pyproject.toml` 中添加 pytest 配置：
-
-```toml
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*", "*Test"]
-python_functions = ["test_*"]
-addopts = [
-    "-v",
-    "--cov=src/<project_name>",
-    "--cov-report=term-missing",
-    "--tb=short",
-]
-
-[tool.coverage.run]
-source = ["src/<project_name>"]
-branch = true
-omit = ["tests/*"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-]
-```
+在 `pyproject.toml` 中添加 pytest 和 coverage 配置，将 [assets/templates/pyproject-test.toml](assets/templates/pyproject-test.toml) 模板内容追加到 `pyproject.toml`，替换变量 `{{ project_name }}` 为项目名称
 
 
 ## Step 5: 配置版本管理工具
@@ -147,30 +106,13 @@ uv add --dev bumpversion
 
 配置版本元信息
 
-1) 新建 `src/<project_name>/_version.py` 文件用于保存项目版本元信息
+1) 将 [assets/templates/_version.py](assets/templates/_version.py) 写入 `src/<project_name>/_version.py`
 
-    ```python:src/<project_name>/_version.py
-    __version__ = "0.1.0"
-    ```
+2) 将 [assets/templates/__init__.py](assets/templates/__init__.py) 写入 `src/<project_name>/__init__.py`，替换变量 `{{ project_name }}` 为项目名称
 
-2) 将版本信息导出到项目包命名空间，调整 `src/<project_name>/__init__.py`
+3) 将 [assets/templates/test_version.py](assets/templates/test_version.py) 写入 `tests/test_version.py`，替换变量 `{{ project_name }}` 为项目名称
 
-    ```python:src/<project_name>/__init__.py
-    """<project_name> package."""
-
-    from ._version import __version__  # noqa: F401
-    ```
-
-3) 添加测试用例用于验证版本元信息获取
-
-    ```python:tests/test_version.py
-    from <project_name> import __version__
-
-    def test_version():
-        assert __version__
-    ```
-
-将 [assets/bumpversion.cfg.j2](assets/bumpversion.cfg.j2) 模板应用到项目根目录的 `.bumpversion.cfg` 文件，替换变量 `{{ project_name }}` 为项目名称
+将 [assets/templates/bumpversion.cfg](assets/templates/bumpversion.cfg) 模板应用到项目根目录的 `.bumpversion.cfg` 文件，替换变量 `{{ project_name }}` 为项目名称
 
 ## Step 6: 添加常用开发工具
 
@@ -207,7 +149,7 @@ uv run mypy src/<project_name>/
 
 ## Step 8: 更新README
 
-使用模板 [assets/README.md.j2](assets/README.md.j2) 生成项目 README 文件，替换以下变量：
+使用模板 [assets/templates/README.md](assets/templates/README.md) 生成项目 README 文件，替换以下变量：
 - `{{ project_name }}` - 项目名称
 - `{{ project_description }}` - 项目描述
 
