@@ -1,6 +1,6 @@
 ---
 name: git-commit-generator
-description: 分析 git 暂存区变更内容，自动推断提交类型（type）和作用域（scope），生成符合 Conventional Commits v1.0.0 规范的中文提交消息，并执行 git commit。
+description: 分析 git 暂存区变更内容，自动推断提交类型（type）和作用域（scope），生成符合 Conventional Commits v1.0.0 规范的中文提交消息，并执行 git commit。当你需要提交代码、做 git commit、生成 commit message、提交暂存区变更时，请使用此 skill。
 disable-model-invocation: true
 ---
 
