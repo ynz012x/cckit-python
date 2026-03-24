@@ -7,8 +7,9 @@ Claude Code Python 开发工具集
 添加 marketplace 并安装插件：
 
 ```
-/plugin marketplace add github:ynz012x/cckit-python
-/plugin install cckit-python@ccpy
+/plugin marketplace add https://github.com/ynz012x/cckit-python.git
+/plugin install ccpy@cckit-python
+/reload-plugins
 ```
 
 本地开发加载：
