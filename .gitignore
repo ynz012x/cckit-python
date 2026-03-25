@@ -3,3 +3,6 @@
 
 # Skill files
 *.skill
+
+# Claude
+.claude/settings.local.json
