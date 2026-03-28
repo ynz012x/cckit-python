@@ -18,6 +18,22 @@ Claude Code Python 开发工具集
 claude --plugin-dir .
 ```
 
+> **参考文档**：[Claude Code Plugins Reference](https://code.claude.com/docs/en/plugins-reference)
+
+## Rules 同步
+
+由于 Claude Code Plugin 不支持 Rules 分发，需要手动从 Git 仓库拉取到项目的 `.claude` 目录：
+
+```bash
+# 在项目根目录下执行
+mkdir -p ./.claude
+git clone --depth=1 --filter=blob:none --sparse https://github.com/ynz012x/cckit-python.git /tmp/cckit-python
+cd /tmp/cckit-python
+git sparse-checkout set rules
+cp -r rules/* ../.claude/
+rm -rf /tmp/cckit-python
+```
+
 ## Skills
 
 安装后所有 skill 以 `ccpy:` 为命名空间前缀。
