@@ -26,12 +26,14 @@ claude --plugin-dir .
 
 ```bash
 # 在项目根目录下执行
-mkdir -p ./.claude
-git clone --depth=1 --filter=blob:none --sparse https://github.com/ynz012x/cckit-python.git /tmp/cckit-python
-cd /tmp/cckit-python
-git sparse-checkout set rules
-cp -r rules/* ../.claude/
-rm -rf /tmp/cckit-python
+PROJECT_ROOT_DIR="$(pwd)" \
+  && mkdir -p ./.claude/rules \
+  && git clone --depth=1 --filter=blob:none --sparse https://github.com/ynz012x/cckit-python.git /tmp/cckit-python \
+  && cd /tmp/cckit-python \
+  && git sparse-checkout set rules \
+  && cp -r rules "$PROJECT_ROOT_DIR/.claude/" \
+  && cd "$PROJECT_ROOT_DIR" \
+  && rm -rf /tmp/cckit-python
 ```
 
 ## Skills
