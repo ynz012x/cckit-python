@@ -4,6 +4,7 @@
       "Bash(find *)",
       "Bash(grep *)",
       "Bash(ls *)",
+      "Bash(git *)",
       "Glob",
       "Grep",
       "Read"
