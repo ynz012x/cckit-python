@@ -48,6 +48,7 @@ PROJECT_ROOT_DIR="$(pwd)" \
 | `ccpy:system-design` | 基于系统设计 7 步法融合 SERU 方法论，支持增量设计和接口签名输出 |
 | `ccpy:skill-design-advisor` | 基于 Google 5大设计模式，分析 Skill 需求并推荐最佳结构。建议在 skill-creator 之前运行 |
 | `ccpy:skill-creator` | 创建新 skill、修改和优化现有 skill，支持性能测试和描述优化 |
+| `ccpy:memory-synchronizer` | 自动检测项目变更，增量同步多层级 CLAUDE.md 项目记忆 |
 
 ## 目录结构
 
@@ -62,7 +63,8 @@ cckit-python/
 │   ├── requirement-analysis/
 │   ├── system-design/
 │   ├── skill-design-advisor/
-│   └── skill-creator/
+│   ├── skill-creator/
+│   └── memory-synchronizer/
 ├── LICENSE
 └── README.md
 ```
