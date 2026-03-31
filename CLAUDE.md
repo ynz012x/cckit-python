@@ -41,6 +41,7 @@ claude --plugin-dir .   # 以本地插件模式加载，用于测试
 | `system-design` | Pipeline | 融合 SERU 的 7 步系统架构设计 |
 | `skill-design-advisor` | Reviewer+Generator | 为新建或现有 skill 推荐设计模式 |
 | `skill-creator` | Pipeline | 创建、评测和优化 skill（从 Anthropic 同步） |
+| `memory-synchronizer` | Pipeline | 自动检测项目变更，增量同步多层级 CLAUDE.md 项目记忆 |
 
 Skill 目录可包含 `references/` 子目录（供 skill agent 执行时读取的参考文档）和 `templates/` 子目录（文件模板）。
 
